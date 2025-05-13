@@ -87,7 +87,7 @@ const SuperadminDashboard = () => {
     const handleCreateAdmin = async (e) => {
         e.preventDefault();
         try {
-            await authServices.superadmin_createAdmin(adminData);
+            const res = await authServices.superadmin_createAdmin(adminData);
             alert('Admin created!');
             setAdminData({ username: '', password: '', organizationId: '' });
         } catch (err) {

@@ -18,30 +18,16 @@ const Login = () => {
         setLoading(true);
 
         try {
-            let res;
-
-            if (formData.username === 'superadmin') {
-                res = await authServices.superadminLogin(formData);
-                navigate('/superadmin-dashboard');
-            } else {
-                res = await authServices.userLogin(formData);
-                console.log(res);
-                const { mfaSetupRequired, mfaVerified, user, token, userId } = res.data;
-
-                //const uid = user?._id || userId; 
-
-                if (res.status === 206) {
-                    if (mfaSetupRequired) {
-                        navigate(`/user/mfa/${userId}`); // shows QR and OTP input
-                    } else {
-                        navigate(`/user/mfa/${userId}`); // shows only OTP input (you can enhance your component to hide QR if already setup)
-                    }
-                } else {
-                    navigate('/user-dashboard');
-                }                
+            if (formData.username !== 'superadmin') {
+                setError('Only superadmin login is allowed');
+                setLoading(false);
+                return;
             }
 
+            const res = await authServices.superadminLogin(formData);
+            navigate('/superadmin-dashboard');
             setFormData({ username: '', password: '' });
+
         } catch (err) {
             console.error('Login error:', err);
             setError(err.response?.data?.message || 'Login failed');
@@ -53,7 +39,7 @@ const Login = () => {
     return (
         <div className="flex h-screen items-center justify-center bg-gray-100">
             <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
-                <h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Securita</h2>
+                <h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Securita - Superadmin Login</h2>
                 {error && <p className="mb-4 text-center text-red-500">{error}</p>}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
